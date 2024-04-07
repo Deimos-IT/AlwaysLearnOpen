@@ -89,3 +89,67 @@ function moveRightToLeft() {
     animation: disappear 0.5s ease forwards;
 }
 ```
+# xmlhttpresponse
+```js
+function makeRequest() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'YourPage.aspx', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                // Parse JSON response
+                var responseData = JSON.parse(xhr.responseText);
+                console.log(responseData.message); // Access the data sent from the server
+            } else {
+                console.error('Request failed: ' + xhr.status);
+            }
+        }
+    };
+
+    var data = JSON.stringify({ key: "value" }); // Example JSON data
+    xhr.send(data);
+}
+```
+```c#
+
+
+// YourPage.aspx.cs
+
+using System;
+using System.Web.UI;
+
+public partial class YourPage : Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (Request.HttpMethod == "POST")
+        {
+            // Retrieve the data sent from the client-side JavaScript
+            string requestData;
+            using (var reader = new System.IO.StreamReader(Request.InputStream))
+            {
+                requestData = reader.ReadToEnd();
+            }
+
+            // Process the data as needed
+            // For example, you can deserialize JSON data, perform calculations, query a database, etc.
+            
+            // Prepare data to send back to the client
+            var responseData = new { message = "Data received successfully" }; // Example response
+            
+            // Serialize the data into a JSON string
+            string jsonResponse = Newtonsoft.Json.JsonConvert.SerializeObject(responseData);
+            
+            // Set the content type of the response to JSON
+            Response.ContentType = "application/json";
+            
+            // Write the JSON response back to the client
+            Response.Write(jsonResponse);
+            Response.Flush();
+            Response.End();
+        }
+    }
+}
+```
